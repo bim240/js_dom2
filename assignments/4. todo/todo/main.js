@@ -92,6 +92,29 @@ function addlist (event) {
         ul.appendChild(li);
         li.append(checkBox, p, cross);
         event.target.value = '';
+
+        // edit p 
+        p.addEventListener('dblclick' ,editpara)
+
+        function editpara(eventp) {
+            // cross.style.display = 'none';
+            // console.log(eventp.target);
+            var currentPvalue = eventp.target;
+            var inputP = document.createElement('input');
+            inputP.classList.add('editinputP')
+            inputP.value = currentPvalue.innerText;
+            console.log(inputP.value);
+            currentPvalue.parentElement.replaceChild(inputP, currentPvalue);
+            inputP.addEventListener ('keyup', backToPara);
+            function backToPara(e) {
+                // console.lo
+                if(e.keyCode === 13 && e.target.value != ''){
+                    currentPvalue.innerHTML = e.target.value;
+                    e.target.parentElement.replaceChild(currentPvalue, inputP);
+
+                }
+            }
+        }
         
         
         // deletelist
@@ -137,7 +160,7 @@ function addlist (event) {
 
  // line-through
  function lineThrough(event){
- console.dir(event.target);
+ console.log(event.target);
         if(event.target.checked === false){
             event.target.nextElementSibling.classList.remove('lineThrough');
             event.target.parentElement.classList.add('activetask');
