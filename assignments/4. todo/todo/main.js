@@ -97,7 +97,7 @@ function addlist (event) {
         p.addEventListener('dblclick' ,editpara)
 
         function editpara(eventp) {
-            // cross.style.display = 'none';
+            cross.style.display = 'none';
             // console.log(eventp.target);
             var currentPvalue = eventp.target;
             var inputP = document.createElement('input');
