@@ -1,14 +1,30 @@
 var inputdata = document.querySelector('input');
 var ul = document.querySelector('ul');
-var state = [];
+var state = JSON.parse(localStorage.getItem('localStoragestate')) || [];
+// var state = [];
 var itemleft = document.querySelector('.itemleft');
 var all = document.querySelector('.all');
 var active = document.querySelector('.active');
 var complete = document.querySelector('.complete');
 var display = document.querySelector('.display');
 var clearall = document.querySelector('.clearall');
+var allli = ul.childNodes;
+var downArrow = document.querySelector('.img_responsive');
 
+all.parentElement.firstElementChild.classList.add('focusBorder');
+var p1 = Date.now();
+// console.log(p);
 
+view(state);
+addLineState(state);
+// document.addEventListener('click',linethroughrefresh);
+// function linethroughrefresh () {
+//     addLineState(state);
+//     all.classList.remove('focusBorder');
+//     active.classList.remove('focusBorder');
+//     complete.classList.remove('focusBorder');
+// }
+// console.log(all.parentElement);
 
 
 // var liid = -1;
@@ -17,6 +33,7 @@ var clearall = document.querySelector('.clearall');
 
 // all function calll 
 inputdata.addEventListener('keyup', addInputData);
+
 
 
 
@@ -29,8 +46,9 @@ function addInputData (event) {
         obj.finished = false;
         obj.liid = Date.now();
         state.push(obj);
-        console.log(state);
+        // console.log(state);
         event.target.value = '';
+        localStorage.setItem('localStoragestate', JSON.stringify(state));
         view(state);
     }
 }
@@ -65,6 +83,7 @@ function view(state) {
     li.append(checkBox, p, cross);
     itemleft.innerHTML = `${(state.filter(v => v.finished != true)).length} item left`;
     display.style.display = "block";
+    downArrow.style.display = 'block';
     clearall.style.display = "none";
 
     }
@@ -81,10 +100,14 @@ function allEventOnUl (event) {
     if(event.target.tagName == 'SPAN') {
         var removeid = event.target.parentElement.dataset.id;
         state = state.filter(value => value.liid != removeid);
+        localStorage.clear();
+        localStorage.setItem('localStoragestate', JSON.stringify(state));
+
         view(state);
         itemleft.innerHTML = `${(state.filter(v => v.finished != true)).length} item left`;
         if (state.length < 1){
             display.style.display = "none";
+            downArrow.style.display = 'none';
         }
     }
 
@@ -105,6 +128,9 @@ function allEventOnUl (event) {
                 return state;
             }); 
             itemleft.innerHTML = `${(state.filter(v => v.finished != true)).length} item left`;
+            localStorage.clear();
+            localStorage.setItem('localStoragestate', JSON.stringify(state));
+            clearall.style.display = "none";
 
         } else {
             event.target.nextElementSibling.classList.add('lineThrough');
@@ -119,6 +145,8 @@ function allEventOnUl (event) {
             return state;
             });
             itemleft.innerHTML = `${(state.filter(v => v.finished != true)).length} item left`;
+            localStorage.clear();
+            localStorage.setItem('localStoragestate', JSON.stringify(state));
             if ((state.filter(v=> v.finished !=true).length == 0)) {
                 clearall.style.display = "block";
             }
@@ -135,10 +163,14 @@ function allEventOnUl (event) {
 }
 // edit para 
 function editPara (eventp) {
-     
+    //  eventp.target.parentElement.style.border = "none";
+    //  eventp.target.parentElement.classList.remove('add_border_to_li');
+
      if ( eventp.target.tagName = 'p'){
         // cross.style.display = 'none';
         var currentPvalue = eventp.target;
+        eventp.target.nextElementSibling.classList.add('hideOnDblClick');
+        // eventp.target.nextElementSibling.style.display = 'none'
         var inputP = document.createElement('input');
         inputP.classList.add('editinputP');
         inputP.value = currentPvalue.innerText;
@@ -150,13 +182,15 @@ function editPara (eventp) {
             if(e.keyCode === 13 && e.target.value != ''){
                 currentPvalue.innerHTML = e.target.value;
                 e.target.parentElement.replaceChild(currentPvalue, inputP);
-
+                // console.log(e.target.nextElementSibling);
             }
         }
         // cross.style.display = 'inline-block';
-
+        // eventp.target.nextElementSibling.classList.remove('hideOnDblClick');
+        // console.dir(currentPvalue);
 
     }
+    console.dir(eventp.target);
 }
 
 
@@ -170,15 +204,24 @@ all.addEventListener('click', allList);
 function allList(event) {
     // console.log(state);
     view(state);
+    addLineState(state);
+    event.target.classList.add('focusBorder');
+    active.classList.remove('focusBorder');
+    complete.classList.remove('focusBorder');
+    console.dir( all.parentElement.firstElementChild);
 }
 
 
         //active
 active.addEventListener('click', activeList);
 function activeList(event) {
-    // console.log(state)
+    // console.log(ul);
     var stateactive = state.filter(v => v.finished!= true);
     view(stateactive);
+    all.parentElement.firstElementChild.classList.remove('focusBorder');
+    active.classList.add('focusBorder');
+    complete.classList.remove('focusBorder');
+    // addLineState(stateactive);
 } 
         // completed
 complete.addEventListener('click', completeList);
@@ -186,18 +229,87 @@ function completeList(event) {
     // console.log(state)
     var statecomplete = state.filter(v => v.finished == true);
     view(statecomplete);
+    addLineState(statecomplete);
+    all.classList.remove('focusBorder');
+    active.classList.remove('focusBorder');
+    complete.classList.add('focusBorder');
 }
 clearall.addEventListener('click', clearalllist);
 function clearalllist () {
     state = [];
     view(state);
     display.style.display = 'none';
+    downArrow.style.display = 'none';
+    
+
+}
+
+// addLineState(state);
+// console.dir(ul.childNodes);
+
+// adding checked and cross in list
+function addLineState(arr) {
+    // console.log(arr);
+    arr.forEach(value => {
+        if (value.finished == true){
+            allli.forEach(v => { 
+                if (v.dataset.id == value.liid){
+                    v.firstElementChild.checked = true;
+                    v.firstElementChild.nextElementSibling.classList.add('lineThrough');
+                    console.log(v.firstElementChild.nextElementSibling);
+                }
+
+            })
+        }
+        else if (value.finished == false){
+            allli.forEach(v => { 
+                if (v.dataset.id == value.liid){
+                    v.firstElementChild.checked = false;
+                    v.firstElementChild.nextElementSibling.classList.remove('lineThrough');
+                    console.log(v.firstElementChild.nextElementSibling);
+                }
+
+            })
+        }
+
+    });
+
 }
 
 
 
+downArrow.addEventListener('click', finishall);
 
+function finishall(event) {
+    var check = true;
+    state = state.filter(v => {
+        if(v.finished == false) {
+            v.finished = true;
+            check = false;
+            clearall.style.display ="block";
+        }
+        return state;
+       
 
+    })
+    if(check) {
+        state = state.filter(v => {
+            if(v.finished == true) {
+                v.finished = false;
+                clearall.style.display ="none";
+            }
+            return state;
+
+        }
+        
+        )
+    }
+    localStorage.clear();
+    localStorage.setItem('localStoragestate', JSON.stringify(state));
+    addLineState(state);
+    itemleft.innerHTML = `${(state.filter(v => v.finished != true)).length} item left`;
+
+}
 
 
 
