@@ -173,18 +173,28 @@ function editPara (eventp) {
         // eventp.target.nextElementSibling.style.display = 'none'
         var inputP = document.createElement('input');
         inputP.classList.add('editinputP');
-        inputP.value = currentPvalue.innerText;
+        inputP.value = currentPvalue.textContent;
         console.log(inputP.value);
         currentPvalue.parentElement.replaceChild(inputP, currentPvalue);
         inputP.addEventListener ('keyup', backToPara);
         function backToPara(e) {
             // console.lo
             if(e.keyCode === 13 && e.target.value != ''){
-                currentPvalue.innerHTML = e.target.value;
+                currentPvalue.textContent = e.target.value;
                 e.target.parentElement.replaceChild(currentPvalue, inputP);
+                console.dir(eventp.target.parentElement.dataset.id);
+                state.forEach(v =>{
+                    if(v.liid == eventp.target.parentElement.dataset.id) {
+                        v.name = currentPvalue.textContent;
+                    }
+                })
                 // console.log(e.target.nextElementSibling);
             }
+            // console.log(state);
+            localStorage.clear();
+            localStorage.setItem('localStoragestate', JSON.stringify(state));
         }
+       
         // cross.style.display = 'inline-block';
         // eventp.target.nextElementSibling.classList.remove('hideOnDblClick');
         // console.dir(currentPvalue);
