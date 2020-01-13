@@ -1,0 +1,29 @@
+.calculator {
+    text-align: center;
+    margin-top: 50px;
+    color: white;
+    font-weight: 700;
+    /* background-color: #8AE337; */
+    /* width: 250px; */
+}
+body {
+    background-color: #3875EF;
+}
+.result {
+    font-size: 35px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    margin-bottom: 50px;
+    margin-top: 75px;
+
+}
+.btn {
+    background-color:#FD8F36 ;
+    border: none;
+    outline: none;
+    padding: 10px 35px;
+    margin-right: 15px;
+    border-radius: 8px;
+    font-weight: 700;
+    color: white;
+    
+}
